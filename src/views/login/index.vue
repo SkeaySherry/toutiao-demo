@@ -1,6 +1,11 @@
 <template>
   <div class="login-container">
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <template #left>
+        <!-- 后退上一页:  $router.back() 或 $router.go(-1) -->
+        <van-icon name="cross" @click="$router.back()" />
+      </template>
+    </van-nav-bar>
     <van-form ref="loginForm" @submit="onSubmit">
       <van-field
         v-model="user.mobile"
