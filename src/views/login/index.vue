@@ -118,7 +118,8 @@ export default {
         // console.log('登录成功', data)
         this.$store.commit('setUser', data.data)
         this.$toast.success('登录成功')
-        // this.$router.back()
+        // 登录成功,返回上一页(后面优化)
+        this.$router.back()
       } catch (err) {
         if (err.response.status === 400) {
           console.log('手机号或验证码错误')
