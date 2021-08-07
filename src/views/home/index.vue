@@ -36,26 +36,38 @@ swipeable 开启左右手势滑动
       </template>
       <!-- 右侧按钮 -->
       <template #nav-right>
-        <div class="hamburger-btn">
+        <div class="hamburger-btn" @click="isChannelEditShow = true">
           <i class="toutiao toutiao-gengduo"></i>
         </div>
       </template>
     </van-tabs>
     <!-- /频道列表 -->
+    <!-- 频道编辑弹出框 -->
+    <van-popup
+      v-model="isChannelEditShow"
+      position="bottom"
+      :style="{ height: '100%' }"
+      closeable
+      close-icon-position="top-left"
+    >
+      <channel-edit></channel-edit>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list.vue'
+import ChannelEdit from './components/channel-edit'
 export default {
   name: 'HomePage',
-  components: { ArticleList },
+  components: { ArticleList, ChannelEdit },
   props: {},
   data() {
     return {
       active: 0,
-      channels: [] // 用户频道列表
+      channels: [], // 用户频道列表
+      isChannelEditShow: false
     }
   },
   computed: {},

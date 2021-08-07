@@ -1,27 +1,42 @@
 <template>
   <div class="article-list">
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-      :error.sync="error"
-      error-text="请求失败，点击重新加载"
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+      :success-text="refreshText"
+      :success-duration="1500"
     >
-      <van-cell
-        v-for="(article, index) in list"
-        :key="index"
-        :title="article.title"
-      />
-    </van-list>
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        :error.sync="error"
+        error-text="请求失败，点击重新加载"
+      >
+        <article-item
+          v-for="(article, index) in list"
+          :key="index"
+          :article="article"
+        ></article-item>
+
+        <!-- <van-cell
+          v-for="(article, index) in list"
+          :key="index"
+          :title="article.title"
+        /> -->
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 
 <script>
 import { getArticleList } from '@/api/article'
+import ArticleItem from '@/components/article-item'
+
 export default {
   name: '',
-  components: {},
+  components: { ArticleItem },
   props: {
     channel: {
       type: Object,
@@ -34,7 +49,9 @@ export default {
       loading: false,
       finished: false,
       error: false,
-      timestamp: null
+      timestamp: null,
+      isLoading: false, // 刷新状态
+      refreshText: '' // 刷新提示文本
     }
   },
   computed: {},
@@ -70,6 +87,25 @@ export default {
         this.loading = false
         console.log('获取文章列表失败', err)
         this.$toast('获取文章列表失败')
+      }
+    },
+    async onRefresh() {
+      try {
+        const { data } = await getArticleList({
+          channel_id: this.channel.id,
+          timestamp: Date.now(),
+          with_top: 1
+        })
+
+        const { results } = data.data
+        this.list.unshift(...results)
+
+        this.isLoading = false
+        this.refreshText = `刷新成功, 更新${results.length}条数据`
+      } catch (err) {
+        // console.log('刷新失败', err)
+        this.isLoading = false
+        this.refreshText = '刷新失败'
       }
     }
   }

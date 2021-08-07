@@ -9,6 +9,8 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // 加载 amfe-flexible
 import 'amfe-flexible'
+// 加载处理时间的过滤器
+import '@/utils/dayjs'
 
 Vue.use(Vant)
 
