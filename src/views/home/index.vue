@@ -15,9 +15,9 @@
     <!-- /导航栏 -->
     <!-- 频道列表 -->
     <!--
-animated 滑动的动画
-border 底边框线
-swipeable 开启左右手势滑动
+        animated 滑动的动画
+        border 底边框线
+        swipeable 开启左右手势滑动
 -->
     <van-tabs class="channel-tabs" v-model="active" swipeable animated border>
       <van-tab
@@ -50,7 +50,11 @@ swipeable 开启左右手势滑动
       closeable
       close-icon-position="top-left"
     >
-      <channel-edit></channel-edit>
+      <channel-edit
+        :my-channels="channels"
+        :active="active"
+        @updateActive="onUpdateActive"
+      ></channel-edit>
     </van-popup>
   </div>
 </template>
@@ -86,6 +90,10 @@ export default {
         console.log('获取频道数据失败', err)
         this.$toast('获取频道数据失败')
       }
+    },
+    onUpdateActive(index, isShow) {
+      this.active = index
+      this.isChannelEditShow = isShow
     }
   }
 }
