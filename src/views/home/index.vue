@@ -9,6 +9,7 @@
         size="small"
         round
         icon="search"
+        to="/search"
         >搜索</van-button
       >
     </van-nav-bar>
@@ -63,6 +64,8 @@
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list.vue'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 export default {
   name: 'HomePage',
   components: { ArticleList, ChannelEdit },
@@ -74,10 +77,26 @@ export default {
       isChannelEditShow: false
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   watch: {},
   created() {
-    this.loadChannels()
+    // this.loadChannels()
+    if (this.user) {
+      // 登录
+      this.loadChannels()
+    } else {
+      // 未登录
+      const localChannels = getItem('TOUTIAO')
+      if (localChannels) {
+        // 有本地数据
+        this.channels = localChannels
+      } else {
+        // 没有本地数据
+        this.loadChannels()
+      }
+    }
   },
   mounted() {},
   methods: {
