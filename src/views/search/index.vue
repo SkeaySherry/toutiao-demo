@@ -33,7 +33,12 @@
     <!-- /联想建议 -->
 
     <!-- 搜索历史记录 -->
-    <search-history v-else></search-history>
+    <search-history
+      v-else
+      :search-histories="searchHistories"
+      @search="onSearch"
+      @clear="searchHistories = []"
+    ></search-history>
     <!-- /搜索历史记录 -->
   </div>
 </template>
@@ -41,6 +46,7 @@
 import SearchHistory from './components/search-history.vue'
 import SearchResult from './components/search-result.vue'
 import SearchSuggestion from './components/search-suggestion.vue'
+import { setItem, getItem } from '@/utils/storage'
 export default {
   name: 'SearchPage',
   components: { SearchResult, SearchSuggestion, SearchHistory },
@@ -48,16 +54,31 @@ export default {
   data() {
     return {
       searchText: '', // 绑定输入框变量
-      isResultShow: false
+      isResultShow: false,
+      searchHistories: getItem('TOUTIAO_SEARCH_HISTORY') || [] // 搜索历史记录
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    searchHistories(val) {
+      setItem('TOUTIAO_SEARCH_HISTORY', val)
+    }
+  },
   created() {},
   methods: {
     onSearch(val) {
-      console.log(val) // 输入的值
+      // console.log(val) // 输入的值
+
       this.searchText = val
+      // 储存历史记录
+      // 判断是否有重复
+      const index = this.searchHistories.indexOf(val)
+      if (index !== -1) {
+        this.searchHistories.splice(index, 1)
+      }
+      // 最新的排在最前面
+      this.searchHistories.unshift(val)
+
       this.isResultShow = true
     },
     onCancel() {

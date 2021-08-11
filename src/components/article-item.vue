@@ -1,6 +1,9 @@
 <template>
   <!-- 文章列表项 -->
-  <van-cell class="article-item">
+  <van-cell
+    class="article-item"
+    :to="{ name: 'article', params: { articleId: article.art_id } }"
+  >
     <template #title>
       <div class="title van-multi-ellipsis--l2">
         {{ article.title }}
