@@ -35,34 +35,50 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | filterTime }}
           </div>
-          <van-button
+          <!-- 关注按钮 -->
+          <!-- <follow-user
+            :is_followed="article.is_followed"
+            :aut_id="article.aut_id"
+            @updateFollow="article.is_followed = $event"
+          /> -->
+          <follow-user
             class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-            >关注</van-button
-          >
-          <!-- <van-button
-            class="follow-btn"
-            round
-            size="small"
-          >已关注</van-button> -->
+            v-model="article.is_followed"
+            :aut_id="article.aut_id"
+          />
+          <!--/ 关注按钮 -->
         </van-cell>
         <!-- /用户信息 -->
 
         <!-- 文章内容 -->
-        <div class="article-content" v-html="article.content"></div>
+        <div
+          class="article-content markdown-body"
+          v-html="article.content"
+          ref="article-content"
+        ></div>
         <van-divider>正文结束</van-divider>
+        <!-- 评论列表 -->
+        <comment-list />
+        <!-- /评论列表 -->
+
         <!-- 底部区域 -->
         <div class="article-bottom">
           <van-button class="comment-btn" type="default" round size="small"
             >写评论</van-button
           >
           <van-icon name="comment-o" info="123" color="#777" />
-          <van-icon color="#777" name="star-o" />
-          <van-icon color="#777" name="good-job-o" />
+          <!-- 收藏 -->
+          <collect-article
+            class="btn-item"
+            v-model="article.is_collected"
+            :art_id="article.art_id"
+          />
+          <!-- 点赞 -->
+          <like-article
+            class="btn-item"
+            v-model="article.attitude"
+            :art_id="article.art_id"
+          />
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
@@ -89,9 +105,15 @@
 
 <script>
 import { getArticleById } from '@/api/article'
+import { ImagePreview } from 'vant'
+import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-article'
+import CommentList from './components/comment-list.vue'
+
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: { FollowUser, CollectArticle, LikeArticle, CommentList },
   props: {
     // 使用props获取动态路由的数据
     articleId: {
@@ -123,6 +145,12 @@ export default {
         console.log(data)
         this.article = data.data
         this.loading = false
+
+        // 处理图片预览
+        this.$nextTick(() => {
+          // console.log(this.$refs['article-content'])
+          this.loadImage()
+        })
       } catch (err) {
         this.loading = false
         // console.log('获取失败', err)
@@ -130,6 +158,21 @@ export default {
           this.errStatus = 404
         }
       }
+    },
+    loadImage() {
+      const articleContent = this.$refs['article-content']
+      const imgs = articleContent.querySelectorAll('img')
+      // console.log(imgs)
+      const images = []
+      imgs.forEach((image, index) => {
+        images.push(image.src)
+        // 给每个图片注册点击事件
+        image.onclick = () =>
+          ImagePreview({
+            images,
+            startPosition: index
+          })
+      })
     }
   }
 }

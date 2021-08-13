@@ -27,17 +27,6 @@ const routes = [
         path: 'my',
         name: 'my',
         component: () => import('@/views/my')
-      },
-      {
-        path: 'search',
-        name: 'search',
-        component: () => import('@/views/search')
-      },
-      {
-        path: 'article/:articleId',
-        name: 'article',
-        component: () => import('@/views/article'),
-        props: true
       }
     ]
   },
@@ -45,6 +34,17 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/login/index.vue')
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/search')
+  },
+  {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/article'),
+    props: true
   }
 ]
 
